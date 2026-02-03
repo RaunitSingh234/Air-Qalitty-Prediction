@@ -69,6 +69,3 @@ AirAware provides:
 7. Reports available for download  
 
 ---
-
-## 📂 Project Structure
-
