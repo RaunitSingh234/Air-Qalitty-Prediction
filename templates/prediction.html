@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Prediction</title>
+<style>
+body{background:#0b1623;color:#e6f7f5;font-family:Segoe UI;padding:40px}
+.card{background:#122d3a;padding:20px;border-radius:12px;width:400px}
+input{width:100%;padding:10px;margin:10px 0}
+button{padding:10px;background:#0ea5a4;border:none;color:white}
+</style>
+</head>
+<body>
+
+<a href="/dashboard" style="color:white">⬅ Back</a>
+
+<div class="card">
+<h2>AQI Prediction</h2>
+
+<form method="post">
+  PM2.5: <input type="number" step="0.1" name="pm25" required>
+  PM10: <input type="number" step="0.1" name="pm10" required>
+  <button type="submit">Predict</button>
+</form>
+
+{% if result %}
+<h3>Predicted AQI: {{ result[0] }}</h3>
+<h3>Status: {{ result[1] }}</h3>
+{% endif %}
+</div>
+
+</body>
+</html>

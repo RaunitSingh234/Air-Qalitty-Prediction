@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Download Section</title>
+<style>
+body{background:#0b1623;color:#e6f7f5;font-family:Segoe UI;padding:40px}
+.card{background:#122d3a;padding:20px;border-radius:12px;margin-bottom:25px;width:450px}
+button{background:#0ea5a4;border:none;color:white;padding:10px;margin-top:10px}
+select{padding:8px}
+</style>
+</head>
+<body>
+
+<a href="/dashboard" style="color:white">⬅ Back to Dashboard</a>
+
+<h1>Download Data</h1>
+
+<div class="card">
+  <h3>⬇ Download full dataset (CSV)</h3>
+  <a href="/download-data"><button>Download All Data</button></a>
+</div>
+
+<div class="card">
+  <h3>⬇ Download city-wise data</h3>
+
+  <form action="/download-by-city" method="get">
+    <select name="city" required>
+      {% for c in cities %}
+        <option value="{{ c.city }}">{{ c.city }}</option>
+      {% endfor %}
+    </select>
+
+    <button type="submit">Download Selected City</button>
+  </form>
+</div>
+
+</body>
+</html>

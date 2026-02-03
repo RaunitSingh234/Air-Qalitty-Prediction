@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Health Advisor</title>
+
+<style>
+body{
+  background:#0b1623;
+  color:white;
+  font-family:Segoe UI;
+  padding:40px;
+}
+.card{
+  background:#122d3a;
+  padding:20px;
+  border-radius:14px;
+  width:600px;
+  margin:auto;
+  box-shadow:0 0 15px #02131b;
+}
+input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+}
+button{
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#0ea5a4;
+  color:white;
+}
+.badge{
+  padding:6px 12px;
+  border-radius:20px;
+  color:black;
+}
+</style>
+</head>
+
+<body>
+
+<a href="/dashboard" style="color:white">⬅ Back</a>
+
+<h2 align="center">Health Advisor 🩺</h2>
+
+<div class="card">
+
+<form method="post">
+  <label>Enter AQI value</label>
+  <input type="number" name="aqi" required placeholder="Example: 135">
+  <button type="submit">Get Health Advice</button>
+</form>
+
+{% if result %}
+
+<hr>
+
+<h3>Your AQI: {{ result.aqi }}</h3>
+
+<p>
+  Status:
+  <span class="badge" style="background: {{ result.color }};">{{ result.level }}</span>
+
+</p>
+
+<p><b>Health Advice:</b><br>{{ result.advice }}</p>
+
+<p><b>Mask Suggestion:</b><br>{{ result.mask }}</p>
+
+<p><b>Who is at risk?</b><br>{{ result.risk }}</p>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

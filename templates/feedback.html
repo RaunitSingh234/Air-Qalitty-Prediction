@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Feedback</title>
+<style>
+body{background:#0b1623;color:white;font-family:Segoe UI;padding:40px}
+.card{background:#122d3a;padding:20px;border-radius:12px;width:400px}
+input,textarea{width:100%;padding:10px;margin:10px 0}
+button{padding:10px;background:#0ea5a4;border:none;color:white}
+</style>
+</head>
+<body>
+
+<a href="/dashboard" style="color:white">⬅ Back</a>
+
+<div class="card">
+<h2>Feedback</h2>
+
+<form method="post">
+<input name="name" placeholder="Your Name" required>
+<textarea name="message" placeholder="Your feedback" required></textarea>
+<button type="submit">Submit</button>
+</form>
+
+{% if msg %}
+<p>{{ msg }}</p>
+{% endif %}
+
+</div>
+</body>
+</html>

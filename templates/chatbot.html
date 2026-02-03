@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Chatbot</title>
+
+<style>
+body{
+  background:#0b1623;
+  color:white;
+  font-family:Segoe UI;
+  padding:20px;
+}
+
+/* chat window */
+.chatbox{
+  background:#0f2a36;
+  width:60%;
+  height:400px;
+  margin:auto;
+  padding:15px;
+  border-radius:14px;
+  overflow-y:auto;
+  box-shadow:0 0 15px #02131b;
+}
+
+/* message bubbles */
+.user{
+  background:#1f8fff;
+  padding:10px 14px;
+  border-radius:14px;
+  margin:8px 0;
+  max-width:70%;
+  align-self:flex-end;
+}
+
+.bot{
+  background:#13303f;
+  padding:10px 14px;
+  border-radius:14px;
+  margin:8px 0;
+  max-width:70%;
+  align-self:flex-start;
+}
+
+/* flex vertical layout */
+.msg{
+  display:flex;
+  flex-direction:column;
+}
+
+form{
+  width:60%;
+  margin:auto;
+  margin-top:12px;
+  display:flex;
+  gap:8px;
+}
+
+input{
+  flex:1;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+}
+
+button{
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:#0ea5a4;
+  color:white;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<a href="/dashboard" style="color:white">⬅ Back</a>
+
+<h2 align="center">AirAware Smart Chatbot 🤖</h2>
+
+<div class="chatbox" id="chatBox">
+
+  {% for who,msg in chat %}
+    {% if who == 'user' %}
+      <div class="msg" style="align-items:flex-end">
+        <div class="user">{{ msg }}</div>
+      </div>
+    {% else %}
+      <div class="msg">
+        <div class="bot">{{ msg }}</div>
+      </div>
+    {% endif %}
+  {% endfor %}
+
+</div>
+
+<form method="post">
+  <input type="text" name="question" placeholder="Type your message..." autofocus required>
+  <button type="submit">Send</button>
+</form>
+
+<script>
+// auto scroll to bottom
+var box = document.getElementById("chatBox");
+box.scrollTop = box.scrollHeight;
+</script>
+
+</body>
+</html>

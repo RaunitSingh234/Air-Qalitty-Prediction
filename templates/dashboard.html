@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AirAware Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Google Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+body.light{
+  background:#f3f6fa;
+  color:#0b1623;
+}
+.share-float{
+  position: fixed;
+  right: 25px;
+  top: 25px;
+  z-index: 9999;
+}
+
+.share-float button{
+  background:#25D366;
+  color:white;
+  border:none;
+  border-radius:50px;
+  padding:12px 18px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.share-float button:hover{
+  opacity:0.9;
+}
+
+.light .sidebar{
+  background:#ffffff;
+  color:#0b1623;
+  border-right:1px solid #ddd;
+}
+
+.light .card,
+.light .card-small{
+  background:#ffffff;
+  color:#0b1623;
+  box-shadow:0 0 10px #cfd8dc;
+}
+
+.light .nav-item{
+  color:#0b1623;
+}
+.light .nav-item:hover{
+  background:#e3f2fd;
+}
+
+body{
+  margin:0;
+  font-family:Segoe UI,Arial;
+  background:#0b1623;
+  color:#e6f7f5;
+}
+
+/* ===== Sidebar ===== */
+.sidebar{
+  width:240px;
+  height:100vh;
+  position:fixed;
+  background:linear-gradient(180deg,#0f2a36,#0b1623);
+  padding:25px;
+  border-right:1px solid #123444;
+}
+.sidebar h2{
+  margin-top:0;
+  color:#22e3d2;
+}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 8px;
+  margin:6px 0;
+  border-radius:8px;
+  cursor:pointer;
+  text-decoration:none;
+  color:#e6f7f5;
+}
+.nav-item:hover{
+  background:#153545;
+}
+
+/* ===== Main Area ===== */
+.main{
+  margin-left:260px;
+  padding:25px;
+}
+
+/* ===== Grid Cards Stats ===== */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+  margin-bottom:20px;
+}
+.card-small{
+  background:#122d3a;
+  padding:18px;
+  border-radius:14px;
+  box-shadow:0 0 10px #02131b;
+}
+.card-small h3{margin:0 0 8px 0;color:#7deaff}
+
+/* ===== Big Cards ===== */
+.card{
+  background:#122d3a;
+  padding:20px;
+  border-radius:14px;
+  margin-bottom:25px;
+  box-shadow:0 0 15px #02131b;
+}
+
+/* Buttons */
+button{
+  padding:10px 14px;
+  background:#0ea5a4;
+  border:none;
+  color:white;
+  border-radius:8px;
+  cursor:pointer;
+}
+button:hover{opacity:.9}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>AirAware</h2>
+
+  <a class="nav-item" href="/dashboard"><span class="material-icons">dashboard</span>{{ t.dashboard }}</a>
+  <a class="nav-item" href="/about"><span class="material-icons">info</span>{{ t.about }}</a>
+  <a class="nav-item" href="/prediction"><span class="material-icons">analytics</span>{{ t.prediction }}</a>
+  <a class="nav-item" href="/health"><span class="material-icons">health_and_safety</span>{{ t.health }}</a>
+  <a class="nav-item" href="/chatbot"><span class="material-icons">smart_toy</span>{{ t.chatbot }}</a>
+  <a class="nav-item" href="/feedback"><span class="material-icons">feedback</span>{{ t.feedback }}</a>
+  <a class="nav-item" href="/download"><span class="material-icons">download</span>{{ t.download }}</a>
+
+
+
+
+
+
+  <br>
+  <label>Language</label>
+  <select onchange="window.location.href='/lang/' + this.value">
+    <option value="en" {% if session.get('lang')=='en' %}selected{% endif %}>English</option>
+    <option value="hi" {% if session.get('lang')=='hi' %}selected{% endif %}>Hindi</option>
+  </select>
+  
+  <button id="modeToggle"> 🌙 Dark / ☀️ Light</button>
+
+  <a class="nav-item" href="/logout"><span class="material-icons">logout</span>{{ t.logout }}</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- Small Statistic Cards -->
+<div class="stats">
+  <div class="card-small">
+    <h3>{{ t.total_cities }}</h3>
+
+    <p>{{ data|length }}</p>
+  </div>
+  <div class="card-small">
+    <h3>{{ t.pm25_avg }}</h3>
+
+    <p>{{ data[0].pm25|round(2) if data }}</p>
+  </div>
+  <div class="card-small">
+   <h3>{{ t.pm10_avg }}</h3>
+
+    <p>{{ data[0].pm10|round(2) if data }}</p>
+  </div>
+</div>
+
+<!-- CITY BAR CHART -->
+<div class="card">
+  <h2>{{ t.citywise }}</h2>
+
+  <canvas id="pollutionChart"></canvas>
+</div>
+
+<!-- MONTH LINE CHART -->
+<div class="card">
+  <h2>{{ t.monthwise }}</h2>
+
+  <canvas id="monthlyChart"></canvas>
+</div>
+
+</div>
+
+<!-- ===== Data JSON ===== -->
+<script type="application/json" id="chart-data">
+  {{ data | tojson }}
+</script>
+
+<script>
+/* ---------- CITY BAR ---------- */
+const d = JSON.parse(document.getElementById("chart-data").textContent);
+
+const cities = d.map(x=>x.city);
+const pm25 = d.map(x=>x.pm25);
+const pm10 = d.map(x=>x.pm10);
+
+new Chart(pollutionChart,{
+  type:"bar",
+  data:{
+    labels:cities,
+    datasets:[
+      {label:"PM2.5",data:pm25},
+      {label:"PM10",data:pm10}
+    ]
+  }
+});
+
+/* ---------- MONTH LINE ---------- */
+fetch("/monthly-data").then(r=>r.json()).then(data=>{
+  new Chart(monthlyChart,{
+    type:"line",
+    data:{
+      labels:data.map(m=>"M"+m.month),
+      datasets:[
+        {label:"PM2.5",data:data.map(x=>x.pm25)},
+        {label:"PM10",data:data.map(x=>x.pm10)}
+      ]
+    }
+  });
+});
+</script>
+<script>
+// ---- Load saved mode ----
+if(localStorage.getItem("theme") === "light"){
+  document.body.classList.add("light");
+}
+
+// ---- Toggle on click ----
+document.getElementById("modeToggle").onclick = function(){
+  document.body.classList.toggle("light");
+
+  if(document.body.classList.contains("light")){
+    localStorage.setItem("theme","light");
+  } else {
+    localStorage.setItem("theme","dark");
+  }
+}
+</script>
+
+<!-- Floating Share Button -->
+<div class="share-float">
+  <button onclick="shareSite()">📤 Share</button>
+</div>
+
+<script>
+function shareSite(){
+  if(navigator.share){
+    navigator.share({
+      title: "AirAware Project",
+      text: "Check this Air Quality Dashboard!",
+      url: window.location.href
+    });
+  } else {
+    alert("Browser does not support direct sharing.");
+  }
+}
+</script>
+
+
+</body>
+</html>
